@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Path,Query,Form,File
+from fastapi import FastAPI,Path,Query,Form,File,UploadFile
 from unittest.util import _MAX_LENGTH
 from enum import Enum
 from typing import Union #it sends the blank value to the backend
@@ -41,11 +41,13 @@ async def path_func(Item):
 #     return (var_name)
 
 
+
 # query parameters with using Union
 @app.get("/query")
 async def query_func(name: Union[str, None] = None, roll_no: Union[str, None] = Query(default=None,min_length=3,max_length=4)):
     var_name = {"name": name, "roll_no": roll_no}
     return (var_name)
+
 
 
 # using Enum
@@ -57,10 +59,13 @@ async def get_model(model_name:Choice_Names):
   return {model_name:model_name,"message":"calling two"}
  return {model_name:model_name,"message":"calling three"}
 
+
+
 # request body
 @app.post("/items/")
 async def create_item(item:schema1):
     return item
+
 
 
 # form data-1
@@ -83,3 +88,12 @@ async def form_data(items:himanshu):
 @app.post("/file/upload")
 async def file_byte_len(file: bytes=File()):
  return ({"file":len(file)})
+
+@app.post("/upload/file")
+async def file_upload(file:UploadFile):
+ # return ({"file":file})
+ return ({"file_name":file.filename,"file_content_name":file.content_type})
+
+@app.post("/form/data/filedata")
+async def formdata_uploadfile(file1:UploadFile,file2:bytes=File(),name:str=Form()):
+ return ({"file_name":file1.filename,"file2_bytes":len(file2),"name":name})
