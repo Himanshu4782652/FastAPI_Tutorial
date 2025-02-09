@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Path,Query,Form,File,UploadFile
+from fastapi import FastAPI,Path,Query,Form,File,UploadFile,HTTPException
 from unittest.util import _MAX_LENGTH
 from enum import Enum
 from typing import Union #it sends the blank value to the backend
@@ -97,3 +97,19 @@ async def file_upload(file:UploadFile):
 @app.post("/form/data/filedata")
 async def formdata_uploadfile(file1:UploadFile,file2:bytes=File(),name:str=Form()):
  return ({"file_name":file1.filename,"file2_bytes":len(file2),"name":name})
+
+
+
+#error handling
+@app.post("/error/handling")
+async def handle_error(item:int):
+ if item==2:
+  return HTTPException(status_code=400,detail="item is not equal to 2 try another value!!")
+ return {"value":item}
+
+item=[1,2,3,4,5]
+@app.post("/error1/handling1")
+async def handle_error(item:str):
+ if item not in item:
+  return HTTPException(status_code=400,detail="item is not equal to 2 try another value!!")
+ return {"value":item}
